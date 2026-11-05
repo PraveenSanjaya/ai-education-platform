@@ -10,6 +10,7 @@ import { wordsRouter } from './routes/words.js';
 import { lessonsRouter } from './routes/lessons.js';
 import { resultsRouter } from './routes/results.js';
 import { grammarRouter } from './routes/grammar.js';
+import { historyRouter, progressRouter } from './routes/history.js';
 
 export function createApp() {
   const app = express();
@@ -28,6 +29,8 @@ export function createApp() {
   app.use('/api/lessons', lessonsRouter);
   app.use('/api/results', resultsRouter);
   app.use('/api/grammar', grammarRouter);
+  app.use('/api/history', historyRouter);
+  app.use('/api/progress', progressRouter);
 
   app.use(notFound);
   app.use(errorHandler);
