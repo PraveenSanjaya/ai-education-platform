@@ -159,7 +159,7 @@ export default function Vocabulary() {
       {pending && (
         <div
           role="status"
-          className="fixed bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded bg-slate-900 px-4 py-2 text-white shadow-lg"
+          className="above-tabbar fixed left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 rounded bg-slate-900 px-4 py-2 text-white shadow-lg"
         >
           Deleted “{pending.english}”
           <button className="font-semibold underline" onClick={undo}>

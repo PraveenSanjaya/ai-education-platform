@@ -41,7 +41,7 @@ export default function Layout() {
       >
         Skip to content
       </a>
-      <header className="border-b bg-white">
+      <header className="sticky top-0 z-30 border-b bg-white safe-top">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-2 p-3">
           <Link to="/" className="mr-2 text-lg font-bold text-indigo-700">
             English for Sinhala
@@ -108,14 +108,14 @@ export default function Layout() {
       <main
         id="main"
         tabIndex={-1}
-        className={`mx-auto max-w-5xl p-4 focus:outline-none ${user ? 'pb-24 min-[700px]:pb-4' : ''}`}
+        className={`mx-auto max-w-5xl p-4 focus:outline-none ${user ? 'main-with-tabs min-[700px]:pb-4' : ''}`}
       >
         <Outlet />
       </main>
       {user && (
         <nav
           aria-label="Main (phone)"
-          className="fixed inset-x-0 bottom-0 z-40 border-t bg-white min-[700px]:hidden"
+          className="safe-tabbar fixed inset-x-0 bottom-0 z-40 border-t bg-white min-[700px]:hidden"
         >
           <ul className="mx-auto grid max-w-lg grid-flow-col auto-cols-fr">
             {items.map((n) => (
