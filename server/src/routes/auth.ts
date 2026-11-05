@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
-import { LEVELS, User, toPublicUser, type UserDoc } from '../models/User.js';
+import { CHALLENGES, LEVELS, User, toPublicUser, type UserDoc } from '../models/User.js';
 import { signToken } from '../middleware/auth.js';
 import { HttpError, parse, wrap } from '../middleware/http.js';
 
@@ -12,6 +12,7 @@ const registerSchema = z.object({
   email: z.string().trim().email('Enter a valid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters').max(100),
   startLevel: z.enum(LEVELS).optional(),
+  challenge: z.enum(CHALLENGES).optional(),
 });
 
 const loginSchema = z.object({
@@ -30,6 +31,7 @@ authRouter.post(
       email: body.email,
       passwordHash: await bcrypt.hash(body.password, 10),
       startLevel: body.startLevel ?? 'Beginner',
+      challenge: body.challenge ?? 'easy',
     });
     const doc = user.toObject() as UserDoc;
     res.status(201).json({ token: signToken(String(doc._id)), user: toPublicUser(doc) });
