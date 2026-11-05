@@ -4,6 +4,7 @@ import { useDebounce } from '../lib/useDebounce';
 import type { SavedWord } from '../lib/types';
 import AddWordForm from '../components/AddWordForm';
 import StrengthMeter from '../components/StrengthMeter';
+import SpeakButton from '../components/SpeakButton';
 import { Button, Card, ErrorMessage, Loading, TextInput } from '../components/ui';
 
 const FILTERS = [
@@ -141,6 +142,7 @@ export default function Vocabulary() {
                   </p>
                   {w.example && <p className="text-sm text-slate-500">{w.example}</p>}
                 </div>
+                <SpeakButton text={w.english} />
                 <StrengthMeter value={w.strength} />
                 <Button
                   variant="secondary"
