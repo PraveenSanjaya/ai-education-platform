@@ -6,6 +6,10 @@ const schema = new Schema({
   partOfSpeech: { type: String, default: '' },
   level: { type: String, default: '' },
   example: { type: String, default: '' },
+  sentenceEasy: { type: String, default: '' },
+  sentenceHard: { type: String, default: '' },
+  /** Emoji (or image URL) for the picture words game; set for concrete nouns. */
+  imageUrl: { type: String, default: '' },
   source: { type: String, enum: ['seed', 'api'], default: 'seed' },
 });
 
