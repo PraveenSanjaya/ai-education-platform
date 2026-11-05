@@ -4,7 +4,7 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: { sans: ['"Noto Sans"', '"Noto Sans Sinhala"', 'system-ui', 'sans-serif'] },
+      fontFamily: { sans: ['"Noto Sans Sinhala"', '"Noto Sans"', 'system-ui', 'sans-serif'] },
     },
   },
   plugins: [],
