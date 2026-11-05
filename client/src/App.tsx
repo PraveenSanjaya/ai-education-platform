@@ -10,6 +10,7 @@ import Vocabulary from './pages/Vocabulary';
 import VocabTests from './pages/VocabTests';
 import Grammar from './pages/Grammar';
 import Lesson from './pages/Lesson';
+import GrammarTests from './pages/GrammarTests';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/vocab-tests" element={<VocabTests />} />
           <Route path="/grammar" element={<Grammar />} />
           <Route path="/grammar/:id" element={<Lesson />} />
+          <Route path="/grammar-tests" element={<GrammarTests />} />
         </Route>
         <Route element={<ProtectedRoute admin />}>
           <Route path="/admin" element={<Admin />} />
