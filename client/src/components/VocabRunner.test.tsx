@@ -39,3 +39,14 @@ describe('VocabRunner', () => {
     expect(answers.map((a: { correct: boolean }) => a.correct)).toEqual([false, true]);
   });
 });
+
+describe('VocabRunner keyboard support', () => {
+  it('answers with a number key and moves on with Enter', async () => {
+    const onFinish = vi.fn();
+    render(<VocabRunner questions={[questions[0]]} onFinish={onFinish} />);
+    await userEvent.keyboard('1'); // option 1 is the first listed option; shuffled by the server, here 'පොත'
+    expect(screen.getByRole('status')).toHaveTextContent('Correct!');
+    await userEvent.keyboard('{Enter}'); // the Finish button is focused automatically
+    expect(onFinish).toHaveBeenCalledTimes(1);
+  });
+});
