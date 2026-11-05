@@ -26,6 +26,9 @@ export default function Layout() {
               <NavLink to="/vocab-tests" className={link}>
                 Vocab tests
               </NavLink>
+              <NavLink to="/grammar" className={link}>
+                Grammar
+              </NavLink>
               <NavLink to="/profile" className={link}>
                 Profile
               </NavLink>
