@@ -11,6 +11,7 @@ import { lessonsRouter } from './routes/lessons.js';
 import { resultsRouter } from './routes/results.js';
 import { grammarRouter } from './routes/grammar.js';
 import { historyRouter, progressRouter } from './routes/history.js';
+import { publicRouter } from './routes/public.js';
 
 export function createApp() {
   const app = express();
@@ -22,6 +23,7 @@ export function createApp() {
   });
 
   app.use('/api/auth', authRouter);
+  app.use('/api/public', publicRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/admin', adminRouter);
   app.use('/api/dictionary', dictionaryRouter);
