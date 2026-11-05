@@ -6,6 +6,7 @@ export interface User {
   name: string;
   email: string;
   startLevel: Level;
+  challenge: 'easy' | 'hard';
   role: 'user' | 'admin';
   active: boolean;
   createdAt: string;
@@ -17,6 +18,7 @@ export interface SavedWord {
   sinhala: string;
   partOfSpeech: string;
   example: string;
+  imageUrl?: string;
   strength: number;
   seenCount: number;
   needsReview: boolean;
@@ -33,7 +35,7 @@ export interface Lookup {
 
 export interface VocabQuestion {
   wordId: string;
-  format: 'en-si' | 'si-en' | 'spelling';
+  format: 'en-si' | 'si-en' | 'spelling' | 'cloze';
   prompt: string;
   options?: string[];
   answer: string;
@@ -125,3 +127,11 @@ export interface Progress {
 
 /** Minutes ahead of UTC for the learner's browser, so streak days follow local midnight. */
 export const tzOffset = () => -new Date().getTimezoneOffset();
+
+export interface PicWord {
+  english: string;
+  sinhala: string;
+  imageUrl: string;
+  sentence?: string;
+  wordId?: string | null;
+}
