@@ -94,3 +94,34 @@ export interface GrammarResult {
   unlockedNext: string | null;
   recommendedId: string | null;
 }
+
+export interface HistoryItem {
+  id: string;
+  kind: 'vocab' | 'grammar' | 'mixed' | 'placement';
+  title: string;
+  score: number;
+  total: number;
+  percent: number;
+  wrongItems: { prompt: string; response: string; correctAnswer: string; explanation: string }[];
+  createdAt: string;
+}
+
+export interface HistorySummary {
+  sessions: number;
+  averagePercent: number;
+  mistakes: number;
+  streak: number;
+}
+
+export interface Progress {
+  streak: number;
+  wordsSaved: number;
+  wordsLearned: number;
+  lessonsMastered: number;
+  totalLessons: number;
+  lastScores: { id: string; kind: string; title: string; percent: number; createdAt: string }[];
+  next: { lessonId: string; title: string; titleSi: string; bestPercent: number | null } | null;
+}
+
+/** Minutes ahead of UTC for the learner's browser, so streak days follow local midnight. */
+export const tzOffset = () => -new Date().getTimezoneOffset();
