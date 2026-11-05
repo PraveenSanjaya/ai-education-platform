@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react';
 import { api, tokenStore } from '../lib/api';
 import type { Level, User } from '../lib/types';
+import { pendingChallenge } from '../lib/challenge';
 
 interface AuthState {
   user: User | null;
@@ -13,6 +14,7 @@ interface AuthState {
     password: string;
     startLevel: Level;
   }) => Promise<void>;
+  setChallenge: (c: 'easy' | 'hard') => Promise<void>;
   logout: () => void;
   setUser: (u: User) => void;
 }
@@ -43,9 +45,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register: AuthState['register'] = useCallback(async (data) => {
     const r = await api<{ token: string; user: User }>('/auth/register', {
       method: 'POST',
-      body: data,
+      body: { ...data, challenge: pendingChallenge.get() ?? undefined },
     });
+    pendingChallenge.clear();
     tokenStore.set(r.token);
+    setUser(r.user);
+  }, []);
+
+  const setChallenge = useCallback(async (challenge: 'easy' | 'hard') => {
+    const r = await api<{ user: User }>('/users/me', { method: 'PUT', body: { challenge } });
     setUser(r.user);
   }, []);
 
@@ -55,8 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, loading, login, register, logout, setUser }),
-    [user, loading, login, register, logout],
+    () => ({ user, loading, login, register, logout, setUser, setChallenge }),
+    [user, loading, login, register, logout, setChallenge],
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -4,6 +4,7 @@ import { api } from '../lib/api';
 import type { GrammarResult, LessonFull } from '../lib/types';
 import QuestionCard from '../components/QuestionCard';
 import type { Answered } from '../components/QuestionCard';
+import SpeakButton from '../components/SpeakButton';
 import { Button, Card, ErrorMessage, Loading } from '../components/ui';
 
 type Step = 'explain' | 'examples' | 'practice' | 'result';
@@ -131,7 +132,9 @@ function LessonView({ id }: { id: string }) {
           <ul className="space-y-3">
             {lesson.examples.map((ex) => (
               <li key={ex.en}>
-                <p className="font-medium">{ex.en}</p>
+                <p className="flex items-center gap-2 font-medium">
+                  {ex.en} <SpeakButton text={ex.en} />
+                </p>
                 <p lang="si" className="text-slate-600">
                   {ex.si}
                 </p>

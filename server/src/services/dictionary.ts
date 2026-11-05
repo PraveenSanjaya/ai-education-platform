@@ -1,5 +1,6 @@
 import { DictionaryEntry } from '../models/DictionaryEntry.js';
 import { lemmaCandidates } from './lemma.js';
+import type { Challenge } from '../models/User.js';
 import { translateToSinhala } from './translate.js';
 
 export interface LookupResult {
@@ -9,13 +10,27 @@ export interface LookupResult {
   partOfSpeech?: string;
   level?: string;
   example?: string;
+  sentenceEasy?: string;
+  sentenceHard?: string;
+  imageUrl?: string;
   /** The base form that matched, when different from what the user typed (learns -> learn). */
   baseForm?: string;
   source?: 'dictionary' | 'api';
 }
 
 /** Local dictionary first (exact, then base forms), then the translation API (cached). */
-export async function lookupWord(raw: string): Promise<LookupResult> {
+/** The example sentence that matches the learner's challenge (falls back to the plain example). */
+export function sentenceFor(
+  e: { example?: string; sentenceEasy?: string; sentenceHard?: string },
+  challenge: Challenge,
+): string {
+  return (challenge === 'hard' ? e.sentenceHard : e.sentenceEasy) || e.example || '';
+}
+
+export async function lookupWord(
+  raw: string,
+  challenge: Challenge = 'easy',
+): Promise<LookupResult> {
   const word = raw.trim().toLowerCase();
   if (!word) return { found: false };
 
@@ -30,7 +45,10 @@ export async function lookupWord(raw: string): Promise<LookupResult> {
         sinhala: e.sinhala,
         partOfSpeech: e.partOfSpeech,
         level: e.level,
-        example: e.example,
+        example: sentenceFor(e, challenge),
+        sentenceEasy: e.sentenceEasy,
+        sentenceHard: e.sentenceHard,
+        imageUrl: e.imageUrl,
         baseForm: c !== word ? c : undefined,
         source: 'dictionary',
       };

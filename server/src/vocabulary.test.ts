@@ -154,7 +154,7 @@ describe('vocabulary tests api', () => {
     expect(res.status).toBe(200);
     expect(res.body.questions).toHaveLength(3);
     for (const q of res.body.questions) {
-      expect(q.options).toHaveLength(4);
+      expect(q.options).toHaveLength(3); // easy challenge by default
       expect(q.options).toContain(q.answer);
     }
   });
