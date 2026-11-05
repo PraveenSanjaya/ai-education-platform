@@ -13,7 +13,9 @@ const userSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export type UserDoc = InferSchemaType<typeof userSchema> & { _id: import('mongoose').Types.ObjectId };
+export type UserDoc = InferSchemaType<typeof userSchema> & {
+  _id: import('mongoose').Types.ObjectId;
+};
 export const User = model('User', userSchema);
 
 /** Public shape of a user (never includes the password hash). */

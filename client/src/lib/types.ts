@@ -10,3 +10,23 @@ export interface User {
   active: boolean;
   createdAt: string;
 }
+
+export interface SavedWord {
+  id: string;
+  english: string;
+  sinhala: string;
+  partOfSpeech: string;
+  example: string;
+  strength: number;
+  seenCount: number;
+  needsReview: boolean;
+  createdAt: string;
+}
+
+export interface Lookup {
+  found: boolean;
+  sinhala?: string;
+  partOfSpeech?: string;
+  example?: string;
+  baseForm?: string;
+}

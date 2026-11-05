@@ -16,7 +16,9 @@ describe('auth', () => {
   });
 
   it('rejects invalid input with a clear message', async () => {
-    const res = await request(app).post('/api/auth/register').send({ email: 'nope', password: '1' });
+    const res = await request(app)
+      .post('/api/auth/register')
+      .send({ email: 'nope', password: '1' });
     expect(res.status).toBe(400);
     expect(res.body.error).toMatch(/email/i);
   });
