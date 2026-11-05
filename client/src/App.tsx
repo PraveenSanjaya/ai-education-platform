@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import Vocabulary from './pages/Vocabulary';
+import VocabTests from './pages/VocabTests';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/words" element={<Vocabulary />} />
+          <Route path="/vocab-tests" element={<VocabTests />} />
         </Route>
         <Route element={<ProtectedRoute admin />}>
           <Route path="/admin" element={<Admin />} />
