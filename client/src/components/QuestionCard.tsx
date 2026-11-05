@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { isAnswerCorrect } from '../lib/grading';
 import type { GrammarQuestion } from '../lib/types';
 import { Button, TextInput } from './ui';
+import OrderInput from './OrderInput';
 
 export interface Answered {
   question: GrammarQuestion;
@@ -57,6 +58,10 @@ export default function QuestionCard({
           />
           {!result && <Button type="submit">Check</Button>}
         </form>
+      )}
+
+      {question.type === 'order' && (
+        <OrderInput words={question.options!} disabled={!!result} onCheck={check} />
       )}
 
       {(question.type === 'mc' || question.type === 'tf') && (
