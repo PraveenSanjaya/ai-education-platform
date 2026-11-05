@@ -117,3 +117,69 @@ describe('/api/words', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('vocabulary tests api', () => {
+  async function setup() {
+    const { token } = await registerUser();
+    const auth = { Authorization: `Bearer ${token}` };
+    for (const [english, sinhala] of [
+      ['apple', 'ඇපල්'],
+      ['book', 'පොත'],
+      ['water', 'වතුර'],
+    ]) {
+      await request(app).post('/api/words').set(auth).send({ english, sinhala });
+    }
+    return auth;
+  }
+
+  it('builds multiple-choice questions with the answer among 4 options', async () => {
+    const auth = await setup();
+    const res = await request(app).get('/api/words/test?type=en-si').set(auth);
+    expect(res.status).toBe(200);
+    expect(res.body.questions).toHaveLength(3);
+    for (const q of res.body.questions) {
+      expect(q.options).toHaveLength(4);
+      expect(q.options).toContain(q.answer);
+    }
+  });
+
+  it('builds spelling questions showing Sinhala', async () => {
+    const auth = await setup();
+    const res = await request(app).get('/api/words/test?type=spelling').set(auth);
+    const q = res.body.questions[0];
+    expect(q.options).toBeUndefined();
+    expect(/[a-z]/.test(q.answer)).toBe(true);
+  });
+
+  it('mistakes review is empty until a word is answered wrong', async () => {
+    const auth = await setup();
+    expect((await request(app).get('/api/words/test?type=mistakes').set(auth)).status).toBe(400);
+
+    const words = (await request(app).get('/api/words').set(auth)).body.words;
+    const review = await request(app)
+      .post('/api/words/review')
+      .set(auth)
+      .send({ answers: [{ wordId: words[0].id, correct: false }] });
+    expect(review.body.words[0].needsReview).toBe(true);
+    expect(review.body.words[0].strength).toBe(0);
+
+    const mistakes = await request(app).get('/api/words/test?type=mistakes').set(auth);
+    expect(mistakes.body.questions).toHaveLength(1);
+  });
+
+  it('applies strength changes from review answers', async () => {
+    const auth = await setup();
+    const id = (await request(app).get('/api/words').set(auth)).body.words[0].id;
+    for (let i = 0; i < 3; i++) {
+      await request(app)
+        .post('/api/words/review')
+        .set(auth)
+        .send({ answers: [{ wordId: id, correct: true }] });
+    }
+    const word = (await request(app).get('/api/words').set(auth)).body.words.find(
+      (w: { id: string }) => w.id === id,
+    );
+    expect(word.strength).toBe(3);
+    expect(word.seenCount).toBe(3);
+  });
+});

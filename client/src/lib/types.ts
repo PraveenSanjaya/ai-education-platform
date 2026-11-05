@@ -30,3 +30,11 @@ export interface Lookup {
   example?: string;
   baseForm?: string;
 }
+
+export interface VocabQuestion {
+  wordId: string;
+  format: 'en-si' | 'si-en' | 'spelling';
+  prompt: string;
+  options?: string[];
+  answer: string;
+}
