@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import type { LessonSummary } from '../lib/types';
-import { Card, ErrorMessage } from '../components/ui';
+import { Card, ErrorMessage, Loading } from '../components/ui';
 
 export default function Grammar() {
   const [lessons, setLessons] = useState<LessonSummary[] | null>(null);
@@ -19,7 +19,7 @@ export default function Grammar() {
   }, []);
 
   if (error) return <ErrorMessage message={error} />;
-  if (!lessons) return <p>Loading lessons…</p>;
+  if (!lessons) return <Loading label="Loading lessons…" />;
 
   return (
     <div className="space-y-3">

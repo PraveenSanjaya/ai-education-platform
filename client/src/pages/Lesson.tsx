@@ -4,7 +4,7 @@ import { api } from '../lib/api';
 import type { GrammarResult, LessonFull } from '../lib/types';
 import QuestionCard from '../components/QuestionCard';
 import type { Answered } from '../components/QuestionCard';
-import { Button, Card, ErrorMessage } from '../components/ui';
+import { Button, Card, ErrorMessage, Loading } from '../components/ui';
 
 type Step = 'explain' | 'examples' | 'practice' | 'result';
 
@@ -68,7 +68,7 @@ function LessonView({ id }: { id: string }) {
         </Link>
       </div>
     );
-  if (!lesson) return <p>Loading lesson…</p>;
+  if (!lesson) return <Loading label="Loading lesson…" />;
 
   const steps: [Step, string][] = [
     ['explain', '1. Explanation'],

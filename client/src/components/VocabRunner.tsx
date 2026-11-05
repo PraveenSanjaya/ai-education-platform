@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { VocabQuestion } from '../lib/types';
 import { Button, Card, TextInput } from './ui';
+import { useChoiceHotkeys } from '../lib/useHotkeys';
 
 export interface VocabAnswer {
   question: VocabQuestion;
@@ -33,6 +34,10 @@ export default function VocabRunner({
       q.format === 'spelling' ? isSpellingCorrect(response, q.answer) : response === q.answer;
     setCurrent({ question: q, response, correct });
   }
+
+  useChoiceHotkeys(q.options?.length ?? 0, !current && q.format !== 'spelling', (i) =>
+    check(q.options![i]),
+  );
 
   function next() {
     if (!current) return;
@@ -95,7 +100,7 @@ export default function VocabRunner({
         </form>
       ) : (
         <ul className="grid gap-2 sm:grid-cols-2">
-          {q.options!.map((opt) => {
+          {q.options!.map((opt, i) => {
             const isAnswer = current && opt === q.answer;
             const isWrongPick = current && opt === current.response && !current.correct;
             return (
@@ -112,6 +117,9 @@ export default function VocabRunner({
                         : 'bg-white hover:bg-slate-50'
                   }`}
                 >
+                  <kbd aria-hidden="true" className="mr-2 text-xs opacity-60">
+                    {i + 1}
+                  </kbd>
                   {opt}
                 </button>
               </li>

@@ -4,7 +4,7 @@ import { useDebounce } from '../lib/useDebounce';
 import type { SavedWord } from '../lib/types';
 import AddWordForm from '../components/AddWordForm';
 import StrengthMeter from '../components/StrengthMeter';
-import { Button, Card, ErrorMessage, TextInput } from '../components/ui';
+import { Button, Card, ErrorMessage, Loading, TextInput } from '../components/ui';
 
 const FILTERS = [
   ['all', 'All'],
@@ -116,7 +116,7 @@ export default function Vocabulary() {
         </div>
         <ErrorMessage message={error} />
         {loading ? (
-          <p>Loading…</p>
+          <Loading label="Loading your words…" />
         ) : words.length === 0 ? (
           <p className="text-slate-600">
             {search || filter !== 'all'

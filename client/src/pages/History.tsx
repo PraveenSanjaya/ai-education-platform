@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { tzOffset } from '../lib/types';
 import type { HistoryItem, HistorySummary } from '../lib/types';
-import { Button, Card, ErrorMessage } from '../components/ui';
+import { Button, Card, ErrorMessage, Loading } from '../components/ui';
 
 const KIND_LABEL: Record<HistoryItem['kind'], string> = {
   vocab: 'Vocabulary',
@@ -43,7 +43,8 @@ export default function History() {
     }
   }
 
-  if (!items || !summary) return error ? <ErrorMessage message={error} /> : <p>Loading history…</p>;
+  if (!items || !summary)
+    return error ? <ErrorMessage message={error} /> : <Loading label="Loading history…" />;
 
   return (
     <div className="space-y-4">
