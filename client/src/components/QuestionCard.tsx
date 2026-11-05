@@ -4,6 +4,7 @@ import { isAnswerCorrect } from '../lib/grading';
 import type { GrammarQuestion } from '../lib/types';
 import { Button, TextInput } from './ui';
 import OrderInput from './OrderInput';
+import { useChoiceHotkeys } from '../lib/useHotkeys';
 
 export interface Answered {
   question: GrammarQuestion;
@@ -28,6 +29,12 @@ export default function QuestionCard({
     if (result) return;
     setResult({ question, response, correct: isAnswerCorrect(question, response) });
   }
+
+  const choices = question.type === 'mc' || question.type === 'tf' ? question.options! : [];
+  const toResponse = (opt: string) => (question.type === 'tf' ? opt.toLowerCase() : opt);
+  useChoiceHotkeys(choices.length, !result && choices.length > 0, (i) =>
+    check(toResponse(choices[i])),
+  );
 
   function choiceClass(opt: string) {
     if (!result) return 'bg-white hover:bg-slate-50';
@@ -66,7 +73,7 @@ export default function QuestionCard({
 
       {(question.type === 'mc' || question.type === 'tf') && (
         <ul className="grid gap-2 sm:grid-cols-2">
-          {question.options!.map((opt) => (
+          {question.options!.map((opt, i) => (
             <li key={opt}>
               <button
                 disabled={!!result}
@@ -75,6 +82,9 @@ export default function QuestionCard({
                   question.type === 'tf' ? opt.toLowerCase() : opt,
                 )}`}
               >
+                <kbd aria-hidden="true" className="mr-2 text-xs opacity-60">
+                  {i + 1}
+                </kbd>
                 {opt}
               </button>
             </li>
