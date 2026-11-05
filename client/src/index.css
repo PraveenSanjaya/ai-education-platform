@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  font-family: 'Noto Sans', 'Noto Sans Sinhala', system-ui, sans-serif;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* Sinhala text needs a little more line height to avoid clipping diacritics. */
+[lang='si'] {
+  font-family: 'Noto Sans Sinhala', 'Noto Sans', system-ui, sans-serif;
+  line-height: 1.6;
+}
+
+/* Always-visible keyboard focus. */
+:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- Dark theme (class strategy) ---------- */
+.dark {
+  color-scheme: dark;
+}
+.dark body {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+.dark :focus-visible {
+  outline-color: #a5b4fc;
+}
+.dark .bg-white {
+  background-color: #1e293b;
+}
+.dark .bg-slate-50 {
+  background-color: #0f172a;
+}
+.dark .bg-slate-200 {
+  background-color: #334155;
+}
+.dark .bg-slate-300 {
+  background-color: #475569;
+}
+.dark .bg-slate-900 {
+  background-color: #334155;
+}
+.dark .hover\:bg-slate-50:hover {
+  background-color: #334155;
+}
+.dark .hover\:bg-slate-200:hover,
+.dark .hover\:bg-slate-300:hover {
+  background-color: #475569;
+}
+.dark .text-slate-900 {
+  color: #f1f5f9;
+}
+.dark .text-slate-700,
+.dark .text-slate-600 {
+  color: #cbd5e1;
+}
+.dark .text-slate-500 {
+  color: #94a3b8;
+}
+.dark .text-indigo-700 {
+  color: #a5b4fc;
+}
+.dark .text-green-700 {
+  color: #4ade80;
+}
+.dark .text-red-700 {
+  color: #f87171;
+}
+.dark .text-amber-700,
+.dark .text-amber-800 {
+  color: #fbbf24;
+}
+.dark .bg-red-50 {
+  background-color: rgb(239 68 68 / 0.15);
+}
+.dark .bg-green-50 {
+  background-color: rgb(34 197 94 / 0.15);
+}
+.dark .bg-indigo-50 {
+  background-color: rgb(99 102 241 / 0.18);
+}
+.dark .bg-indigo-100 {
+  background-color: rgb(99 102 241 / 0.3);
+}
+.dark .bg-amber-100 {
+  background-color: rgb(245 158 11 / 0.2);
+}
+.dark .border,
+.dark .border-b,
+.dark .divide-y > * {
+  border-color: #334155;
+}
+.dark .border-green-600 {
+  border-color: #16a34a;
+}
+.dark .border-red-600,
+.dark .border-red-300 {
+  border-color: #dc2626;
+}
+.dark .border-indigo-200,
+.dark .border-indigo-300 {
+  border-color: #6366f1;
+}
+.dark input,
+.dark select {
+  color: #f1f5f9;
+}
+.dark .fill-slate-500 {
+  fill: #94a3b8;
+}
+.dark .fill-slate-700 {
+  fill: #e2e8f0;
+}
+.dark .stroke-slate-200 {
+  stroke: #334155;
+}
+.dark .fill-indigo-500 {
+  fill: #818cf8;
+}
