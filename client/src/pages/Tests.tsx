@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { speechSupported } from '../lib/speech';
+import { listenAvailable } from '../lib/speech';
 
 const TESTS = [
   {
@@ -34,7 +34,7 @@ const TESTS = [
 ];
 
 export default function Tests() {
-  const canSpeak = speechSupported();
+  const canSpeak = listenAvailable();
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-bold">Tests</h1>

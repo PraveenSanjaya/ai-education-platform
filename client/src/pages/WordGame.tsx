@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
 import { rulesFor } from '../lib/challenge';
-import { speechSupported } from '../lib/speech';
+import { AUDIO_UNAVAILABLE, listenAvailable } from '../lib/speech';
 import type { PicWord } from '../lib/types';
 import { useAuth } from '../context/AuthContext';
 import TypeWordRound from '../components/TypeWordRound';
@@ -31,14 +31,15 @@ export default function WordGame({ mode }: { mode: 'picture' | 'listen' }) {
   const [done, setDone] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [audio, setAudio] = useState<'idle' | 'ok' | 'failed'>('idle');
 
-  if (mode === 'listen' && !speechSupported()) {
+  if (mode === 'listen' && (!listenAvailable() || audio === 'failed')) {
     return (
       <Card>
         <h1 className="text-xl font-bold">{copy.title}</h1>
         <p className="mt-2 text-slate-600">
-          Your browser cannot play spoken words, so this test is not available. Try Picture words
-          instead.
+          {AUDIO_UNAVAILABLE}, so this test is not available. Every other test still works. Try
+          Picture words instead.
         </p>
         <Link className="mt-2 inline-block text-indigo-700 underline" to="/play">
           Go to Picture words
@@ -54,6 +55,7 @@ export default function WordGame({ mode }: { mode: 'picture' | 'listen' }) {
       const r = await api<{ words: PicWord[] }>('/dictionary/picture-words?count=10');
       setWords(r.words);
       setIndex(0);
+      setAudio('idle');
       setResults([]);
       setDone(false);
     } catch (e) {
@@ -148,6 +150,8 @@ export default function WordGame({ mode }: { mode: 'picture' | 'listen' }) {
         word={words[index]}
         mode={mode}
         rate={rules.speechRate}
+        autoPlay={audio === 'ok'}
+        onAudio={(ok) => setAudio(ok ? 'ok' : 'failed')}
         allowReveal={rules.hints}
         isLast={index === words.length - 1}
         onDone={onDone}

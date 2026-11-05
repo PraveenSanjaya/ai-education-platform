@@ -13,13 +13,17 @@ const word: PicWord = {
 };
 
 function stubSpeech() {
-  const speak = vi.fn();
+  const speak = vi.fn((u: { onstart?: () => void }) => u.onstart?.());
   vi.stubGlobal('SpeechSynthesisUtterance', function (this: { text: string }, text: string) {
     this.text = text;
   });
   Object.defineProperty(window, 'speechSynthesis', {
     configurable: true,
-    value: { speak, cancel: vi.fn() },
+    value: {
+      speak,
+      cancel: vi.fn(),
+      getVoices: () => [{ lang: 'en-US', name: 'Test voice' }],
+    },
   });
   return speak;
 }
@@ -78,10 +82,31 @@ describe('picture round', () => {
 });
 
 describe('listen round', () => {
-  it('plays the word automatically and replays it with the big speaker', async () => {
+  const listen = (props: Partial<React.ComponentProps<typeof TypeWordRound>> = {}) =>
+    round({ mode: 'listen', allowReveal: false, ...props });
+
+  it('does not auto-play the first word: it shows a tap-to-start button', async () => {
     const speak = stubSpeech();
-    render(round({ mode: 'listen', rate: 0.85, allowReveal: false }));
-    expect(speak).toHaveBeenCalledTimes(1);
+    render(listen());
+    expect(speak).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: /tap to start listening/i })).toBeInTheDocument();
+  });
+
+  it('auto-plays later words once audio is known to work', async () => {
+    const speak = stubSpeech();
+    const onAudio = vi.fn();
+    render(listen({ autoPlay: true, onAudio }));
+    await vi.waitFor(() => expect(speak).toHaveBeenCalledTimes(1));
+    expect(screen.queryByRole('button', { name: /tap to start/i })).not.toBeInTheDocument();
+    await vi.waitFor(() => expect(onAudio).toHaveBeenCalledWith(true));
+  });
+
+  it('taps to start, then the big speaker replays at the Easy rate', async () => {
+    const speak = stubSpeech();
+    const onAudio = vi.fn();
+    render(listen({ rate: 0.85, onAudio }));
+    await userEvent.click(screen.getByRole('button', { name: /tap to start listening/i }));
+    await vi.waitFor(() => expect(onAudio).toHaveBeenCalledWith(true));
     expect(speak.mock.calls[0][0]).toMatchObject({ text: 'apple', lang: 'en-US', rate: 0.85 });
     await userEvent.click(screen.getByRole('button', { name: /play the word again/i }));
     expect(speak).toHaveBeenCalledTimes(2);
