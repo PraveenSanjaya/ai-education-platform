@@ -1,10 +1,26 @@
+import { Route, Routes } from 'react-router-dom';
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Admin from './pages/Admin';
+
 export default function App() {
   return (
-    <main className="mx-auto max-w-3xl p-6">
-      <h1 className="text-2xl font-bold">English for Sinhala Learners</h1>
-      <p lang="si" className="mt-2">
-        ඉංග්‍රීසි ඉගෙනීමට සාදරයෙන් පිළිගනිමු
-      </p>
-    </main>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+        <Route element={<ProtectedRoute admin />}>
+          <Route path="/admin" element={<Admin />} />
+        </Route>
+      </Route>
+    </Routes>
   );
 }
