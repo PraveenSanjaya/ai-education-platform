@@ -4,6 +4,8 @@ import { isValidObjectId } from 'mongoose';
 import { Word, toPublicWord, type WordDoc } from '../models/Word.js';
 import { requireAuth } from '../middleware/auth.js';
 import { HttpError, parse, wrap } from '../middleware/http.js';
+import { DictionaryEntry } from '../models/DictionaryEntry.js';
+import { sentenceFor } from '../services/dictionary.js';
 import { applyVocabAnswers } from '../services/vocabReview.js';
 import { buildVocabTest } from '../services/vocabTest.js';
 
@@ -42,7 +44,21 @@ wordsRouter.get(
       query.$or = [{ english: rx }, { sinhala: rx }];
     }
     const words = await Word.find(query).sort({ createdAt: -1 }).lean();
-    res.json({ words: words.map((w) => toPublicWord(w as WordDoc)) });
+    // Example sentences and pictures follow the learner's challenge and come from the dictionary.
+    const entries = await DictionaryEntry.find({
+      english: { $in: words.map((w) => w.english) },
+    }).lean();
+    const byEnglish = new Map(entries.map((e) => [e.english, e]));
+    const challenge = req.user!.challenge ?? 'easy';
+    res.json({
+      words: words.map((w) => {
+        const e = byEnglish.get(w.english);
+        const pub = toPublicWord(w as WordDoc);
+        return e
+          ? { ...pub, example: sentenceFor(e, challenge) || pub.example, imageUrl: e.imageUrl }
+          : pub;
+      }),
+    });
   }),
 );
 
@@ -75,7 +91,7 @@ wordsRouter.get(
   '/test',
   wrap(async (req, res) => {
     const { type } = parse(testQuerySchema, req.query);
-    const questions = await buildVocabTest(req.user!._id, type);
+    const questions = await buildVocabTest(req.user!._id, type, req.user!.challenge ?? 'easy');
     if (questions.length === 0) {
       throw new HttpError(
         400,
