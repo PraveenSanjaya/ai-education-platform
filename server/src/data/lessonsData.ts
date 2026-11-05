@@ -34,6 +34,13 @@ const tf = (prompt: string, truth: boolean, explanation: string): Q => ({
   answers: [truth ? 'true' : 'false'],
   explanation,
 });
+const order = (si: string, sentence: string, words: string[], explanation: string): Q => ({
+  type: 'order',
+  prompt: `Build this sentence: ${si}`,
+  options: words,
+  answers: [sentence],
+  explanation,
+});
 const withIds = (slug: string, qs: Q[]): LessonQuestion[] =>
   qs.map((q, i) => ({ ...q, id: `${slug}-${i + 1}` }));
 
@@ -99,6 +106,12 @@ export const lessonsSeed: LessonSeed[] = [
         true,
         '"The" points to a specific, known thing.',
       ),
+      order(
+        'මම හැම දවසකම ඇපල් ගෙඩියක් කනවා.',
+        'I eat an apple every day',
+        ['apple', 'every', 'I', 'an', 'day', 'eat'],
+        'Use "an" before the vowel sound in "apple".',
+      ),
     ]),
   },
   {
@@ -140,6 +153,12 @@ export const lessonsSeed: LessonSeed[] = [
       ),
       mc('It ___ cold today.', ['am', 'is', 'are', 'be'], 'is', '"It" takes "is".'),
       fill('My brother ___ ten years old.', ['is'], '"My brother" means "he", so we use "is".'),
+      order(
+        'ඇය ඉතා සතුටින් ඉන්නවා.',
+        'She is very happy',
+        ['happy', 'is', 'very', 'She'],
+        'Subject + is + adjective.',
+      ),
     ]),
   },
   {
@@ -208,6 +227,12 @@ export const lessonsSeed: LessonSeed[] = [
         ['cooks'],
         '"My mother" means "she", so add -s: cooks.',
       ),
+      order(
+        'ඔහු හැම දවසකම පාසලට යනවා.',
+        'He goes to school every day',
+        ['school', 'every', 'goes', 'He', 'day', 'to'],
+        'He/she/it takes the -es form: goes.',
+      ),
     ]),
   },
   {
@@ -261,6 +286,12 @@ export const lessonsSeed: LessonSeed[] = [
         'The children are ___ (make) a lot of noise.',
         ['making'],
         'Drop the final e: make → making.',
+      ),
+      order(
+        'ඔවුන් වත්තේ සෙල්ලම් කරමින් සිටිනවා.',
+        'They are playing in the garden',
+        ['garden', 'playing', 'the', 'They', 'in', 'are'],
+        'are + verb-ing.',
       ),
     ]),
   },
@@ -317,6 +348,12 @@ export const lessonsSeed: LessonSeed[] = [
         ['do', 'does', 'did', 'done'],
         'did',
         'Past negative uses "did not".',
+      ),
+      order(
+        'අපි ඊයේ ආච්චි බලන්න ගියා.',
+        'We visited our grandmother yesterday',
+        ['yesterday', 'We', 'grandmother', 'our', 'visited'],
+        'Regular past: visit + ed.',
       ),
     ]),
   },
@@ -389,6 +426,12 @@ export const lessonsSeed: LessonSeed[] = [
         ['will meet'],
         '"Will" + base verb: will meet.',
       ),
+      order(
+        'මම හෙට ඔබට කතා කරන්නම්.',
+        'I will call you tomorrow',
+        ['tomorrow', 'will', 'you', 'I', 'call'],
+        'will + base verb.',
+      ),
     ]),
   },
   {
@@ -453,6 +496,12 @@ export const lessonsSeed: LessonSeed[] = [
         ['Has', 'Have', 'Did', 'Are'],
         'Have',
         '"You" takes "have".',
+      ),
+      order(
+        'ඇය මෙහි වසර දහයක් ජීවත් වෙලා තියෙනවා.',
+        'She has lived here for ten years',
+        ['years', 'lived', 'for', 'She', 'ten', 'has', 'here'],
+        'has + past participle, and "for" with a length of time.',
       ),
     ]),
   },
@@ -521,6 +570,12 @@ export const lessonsSeed: LessonSeed[] = [
         ['get', 'would got', 'getting', 'will to get'],
         'get',
         'Zero conditional (a fact): present simple.',
+      ),
+      order(
+        'වැස්සොත් අපි ගෙදර ඉන්නවා.',
+        'If it rains we will stay at home',
+        ['will', 'we', 'it', 'at', 'If', 'stay', 'rains', 'home'],
+        'First conditional: if + present, will + base verb.',
       ),
     ]),
   },
@@ -594,6 +649,12 @@ export const lessonsSeed: LessonSeed[] = [
         ['build', 'built', 'be built', 'being built'],
         'be built',
         'Future passive: will be + past participle.',
+      ),
+      order(
+        'ලිපිය මගේ නංගී විසින් ලියන ලදී.',
+        'The letter was written by my sister',
+        ['sister', 'was', 'The', 'my', 'by', 'written', 'letter'],
+        'Past passive: was + past participle.',
       ),
     ]),
   },
