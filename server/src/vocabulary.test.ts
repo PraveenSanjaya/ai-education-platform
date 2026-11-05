@@ -118,6 +118,22 @@ describe('/api/words', () => {
   });
 });
 
+describe('word forms from the spec', () => {
+  it('resolves studies -> study and learns -> learn', async () => {
+    const { token } = await registerUser();
+    for (const [typed, base] of [
+      ['studies', 'study'],
+      ['learns', 'learn'],
+    ]) {
+      const res = await request(app)
+        .get(`/api/dictionary/lookup?word=${typed}`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.body.found).toBe(true);
+      expect(res.body.baseForm).toBe(base);
+    }
+  });
+});
+
 describe('vocabulary tests api', () => {
   async function setup() {
     const { token } = await registerUser();
