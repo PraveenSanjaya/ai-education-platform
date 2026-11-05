@@ -26,7 +26,7 @@ export default function Register() {
     setBusy(true);
     try {
       await register(form);
-      navigate('/');
+      navigate('/challenge'); // next step in the flow: choose Easy or Hard
     } catch (err) {
       setError((err as Error).message);
     } finally {
