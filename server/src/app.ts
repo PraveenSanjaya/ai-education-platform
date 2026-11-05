@@ -7,6 +7,8 @@ import { usersRouter } from './routes/users.js';
 import { adminRouter } from './routes/admin.js';
 import { dictionaryRouter } from './routes/dictionary.js';
 import { wordsRouter } from './routes/words.js';
+import { lessonsRouter } from './routes/lessons.js';
+import { resultsRouter } from './routes/results.js';
 
 export function createApp() {
   const app = express();
@@ -22,6 +24,8 @@ export function createApp() {
   app.use('/api/admin', adminRouter);
   app.use('/api/dictionary', dictionaryRouter);
   app.use('/api/words', wordsRouter);
+  app.use('/api/lessons', lessonsRouter);
+  app.use('/api/results', resultsRouter);
 
   app.use(notFound);
   app.use(errorHandler);
