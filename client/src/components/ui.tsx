@@ -52,9 +52,20 @@ export function ErrorMessage({ message }: { message: string }) {
   );
 }
 
-export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
+export function Card({
+  children,
+  className = '',
+  'aria-label': ariaLabel,
+}: {
+  children: ReactNode;
+  className?: string;
+  'aria-label'?: string;
+}) {
   return (
-    <section className={`rounded-lg border bg-white p-4 shadow-sm ${className}`}>
+    <section
+      aria-label={ariaLabel}
+      className={`rounded-lg border bg-white p-4 shadow-sm ${className}`}
+    >
       {children}
     </section>
   );

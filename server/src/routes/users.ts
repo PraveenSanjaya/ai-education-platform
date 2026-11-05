@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { LEVELS, User, toPublicUser, type UserDoc } from '../models/User.js';
+import { CHALLENGES, LEVELS, User, toPublicUser, type UserDoc } from '../models/User.js';
 import { requireAuth } from '../middleware/auth.js';
 import { HttpError, parse, wrap } from '../middleware/http.js';
 
@@ -10,6 +10,7 @@ usersRouter.use(requireAuth);
 const updateSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(80).optional(),
   startLevel: z.enum(LEVELS).optional(),
+  challenge: z.enum(CHALLENGES).optional(),
 });
 
 usersRouter.get('/me', (req, res) => {

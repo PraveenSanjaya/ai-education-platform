@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import type { VocabQuestion } from '../lib/types';
 import { Button, Card, TextInput } from './ui';
 import { useChoiceHotkeys } from '../lib/useHotkeys';
+import { maxReveals, revealLetters } from '../lib/challenge';
 
 export interface VocabAnswer {
   question: VocabQuestion;
@@ -15,15 +16,19 @@ export const isSpellingCorrect = (response: string, answer: string) =>
 
 export default function VocabRunner({
   questions,
+  hints = false,
   onFinish,
 }: {
   questions: VocabQuestion[];
+  /** Easy challenge: spelling questions show a first-letter hint and a letter reveal. */
+  hints?: boolean;
   onFinish: (answers: VocabAnswer[]) => void;
 }) {
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<VocabAnswer[]>([]);
   const [typed, setTyped] = useState('');
   const [current, setCurrent] = useState<VocabAnswer | null>(null);
+  const [reveals, setReveals] = useState(1);
 
   const q = questions[index];
   const isLast = index === questions.length - 1;
@@ -45,6 +50,7 @@ export default function VocabRunner({
     setAnswers(all);
     setCurrent(null);
     setTyped('');
+    setReveals(1);
     if (isLast) onFinish(all);
     else setIndex(index + 1);
   }
@@ -54,7 +60,9 @@ export default function VocabRunner({
       ? 'What is the Sinhala meaning?'
       : q.format === 'si-en'
         ? 'Which English word matches?'
-        : 'Type the English word';
+        : q.format === 'cloze'
+          ? 'Complete the sentence'
+          : 'Type the English word';
 
   return (
     <Card>
@@ -74,7 +82,10 @@ export default function VocabRunner({
         />
       </div>
       <h2 className="mt-4 text-sm font-medium text-slate-600">{heading}</h2>
-      <p lang={q.format === 'en-si' ? 'en' : 'si'} className="my-2 text-3xl font-bold">
+      <p
+        lang={q.format === 'si-en' || q.format === 'spelling' ? 'si' : 'en'}
+        className={`my-2 font-bold ${q.format === 'cloze' ? 'text-2xl' : 'text-3xl'}`}
+      >
         {q.prompt}
       </p>
 
@@ -98,7 +109,23 @@ export default function VocabRunner({
           />
           {!current && <Button type="submit">Check</Button>}
         </form>
-      ) : (
+      ) : null}
+      {q.format === 'spelling' && hints && !current && (
+        <div className="mt-2 flex items-center gap-3">
+          <p aria-live="polite" className="font-mono text-xl tracking-widest">
+            {revealLetters(q.answer, reveals)}
+          </p>
+          <Button
+            type="button"
+            variant="secondary"
+            disabled={reveals >= maxReveals(q.answer)}
+            onClick={() => setReveals(reveals + 1)}
+          >
+            Reveal a letter
+          </Button>
+        </div>
+      )}
+      {q.format === 'spelling' ? null : (
         <ul className="grid gap-2 sm:grid-cols-2">
           {q.options!.map((opt, i) => {
             const isAnswer = current && opt === q.answer;

@@ -19,6 +19,14 @@ An English-learning web app for **Sinhala-speaking learners** in Sri Lanka.
 | --- | --- |
 | ![Vocab test](docs/screenshots/vocab-test.png) | ![History](docs/screenshots/history.png) |
 
+| Home hero | Choose your challenge |
+| --- | --- |
+| ![Home](docs/screenshots/home-hero.png) | ![Challenge](docs/screenshots/challenge-picker.png) |
+
+| Picture words | Phone tab bar |
+| --- | --- |
+| ![Picture words](docs/screenshots/picture-words.png) | ![Phone](docs/screenshots/phone-tab-bar.png) |
+
 | Dark theme | 360 px mobile |
 | --- | --- |
 | ![Dark](docs/screenshots/dashboard-dark.png) | ![Mobile](docs/screenshots/mobile-360.png) |
@@ -84,6 +92,22 @@ Without a translation key the app still works: unknown words simply ask the lear
 - Tests (10 questions): English → Sinhala, Sinhala → English, Spelling, and Mistakes review (only words marked `needsReview`, mixed formats).
 - Adaptive rule: words are picked with probability weighted by `6 − strength`. Correct: strength +1 (max 5), and `needsReview` is cleared once strength ≥ 3. Wrong: strength −2 (min 0) and `needsReview = true`.
 
+### Challenge level (Easy / Hard)
+Every dictionary word has a short `sentenceEasy` (3–5 words) and a longer real-life `sentenceHard`. The learner picks a challenge on `/challenge` (also reachable from the pill in the header); it is stored as `challenge` on the user and the words stay the same.
+
+| | Easy | Hard |
+| --- | --- | --- |
+| Answer choices | 3 | 4 |
+| Spelling hints and letter reveal | yes | no |
+| Complete-the-sentence questions (word blanked out of `sentenceHard`) | no | yes |
+| Speech rate | 0.85 | 1.0 |
+| Example sentences | easy sentence | hard sentence |
+
+### Picture words and Listen and type
+`GET /api/dictionary/picture-words` returns words that have a picture (an emoji stored in `imageUrl` for 80 concrete nouns), preferring the learner's saved words. Picture words shows the picture with **Listen** and **Reveal a letter** (Easy only); Listen and type plays the word automatically with a big replay speaker and is hidden when `speechSynthesis` is unavailable. Results go to history, and saved words change strength like other vocabulary tests. Speaker buttons also appear next to saved words and lesson examples.
+
+The home page (`/`) shows a hero, a live "Try one word" card and a stats band (`GET /api/public/stats`, `/api/public/sample`) to visitors; logged-in learners see the dashboard.
+
 ### Grammar path
 Lessons are stored in the `lessons` collection, so new lessons can be added without code changes (insert a document with the same shape as `server/src/data/lessonsData.ts`).
 
@@ -108,7 +132,7 @@ All routes are under `/api`, JSON, and need `Authorization: Bearer <token>` exce
 | --- | --- | --- |
 | GET | `/health` | Health check |
 | POST | `/auth/register`, `/auth/login` | Create account / log in (returns `token` and `user`) |
-| GET, PUT | `/users/me` | Read / update own name and start level |
+| GET, PUT | `/users/me` | Read / update own name, start level and challenge |
 | GET, POST, PUT, DELETE | `/admin/users[/:id]` | Admin only. DELETE deactivates the user |
 | GET | `/dictionary/lookup?word=` | Sinhala meaning, part of speech, example |
 | GET, POST, DELETE | `/words[/:id]` | Word list (`?q=`, `?filter=all\|learning\|learned\|mistakes`), add, delete |
@@ -118,6 +142,8 @@ All routes are under `/api`, JSON, and need `Authorization: Bearer <token>` exce
 | POST | `/results` | Submit `vocab`, `grammar`, `mixed` or `placement` answers; grades, updates progress, records history |
 | GET, DELETE | `/history` | History with summary / clear history |
 | GET | `/progress` | Dashboard data |
+| GET | `/dictionary/picture-words?count=` | Words with pictures for the picture games |
+| GET | `/public/sample`, `/public/stats` | No login: 3 picture words and real counts for the home page |
 
 Request bodies are validated with zod and errors come back as `{ "error": "message" }`.
 

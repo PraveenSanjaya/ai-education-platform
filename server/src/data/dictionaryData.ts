@@ -246,17 +246,23 @@ manage|කළමනාකරණය කරනවා|verb|B2|She manages a small s
 prepare|සූදානම් කරනවා|verb|B1|I prepare dinner at six.
 `;
 
+import { sentenceSeed } from './dictionarySentences.js';
+
 export interface DictionarySeed {
   english: string;
   sinhala: string;
   partOfSpeech: string;
   level: string;
   example: string;
+  sentenceEasy: string;
+  sentenceHard: string;
+  imageUrl: string;
 }
 
 export const dictionarySeed: DictionarySeed[] = RAW.trim()
   .split('\n')
   .map((line) => {
     const [english, sinhala, partOfSpeech, level, example] = line.split('|');
-    return { english, sinhala, partOfSpeech, level, example };
+    const extra = sentenceSeed[english] ?? { sentenceEasy: '', sentenceHard: '', imageUrl: '' };
+    return { english, sinhala, partOfSpeech, level, example, ...extra };
   });
