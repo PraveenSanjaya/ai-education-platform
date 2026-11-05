@@ -20,6 +20,9 @@ export default function Layout() {
               <NavLink to="/" end className={link}>
                 Dashboard
               </NavLink>
+              <NavLink to="/words" className={link}>
+                Words
+              </NavLink>
               <NavLink to="/profile" className={link}>
                 Profile
               </NavLink>
