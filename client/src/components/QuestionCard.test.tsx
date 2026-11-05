@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import QuestionCard from './QuestionCard';
 import { isAnswerCorrect, normalise } from '../lib/grading';
@@ -45,5 +45,44 @@ describe('QuestionCard', () => {
     await userEvent.click(screen.getByRole('button', { name: 'True' }));
     expect(screen.getByRole('status')).toHaveTextContent(/incorrect.*false/i);
     expect(screen.getByRole('button', { name: 'Finish' })).toBeInTheDocument();
+  });
+});
+
+describe('QuestionCard word ordering', () => {
+  const orderQ: GrammarQuestion = {
+    id: 'q3',
+    type: 'order',
+    prompt: 'Build this sentence: ඇය ඉතා සතුටින් ඉන්නවා.',
+    options: ['happy', 'is', 'very', 'She'],
+    answers: ['She is very happy'],
+    explanation: 'Subject + is + adjective.',
+  };
+
+  it('builds a sentence by tapping words and checks it', async () => {
+    const onNext = vi.fn();
+    render(<QuestionCard question={orderQ} isLast onNext={onNext} />);
+    for (const w of ['She', 'is', 'very', 'happy']) {
+      await userEvent.click(
+        within(screen.getByRole('list', { name: 'Word bank' })).getByRole('button', { name: w }),
+      );
+    }
+    await userEvent.click(screen.getByRole('button', { name: 'Check' }));
+    expect(screen.getByRole('status')).toHaveTextContent('Correct!');
+    await userEvent.click(screen.getByRole('button', { name: 'Finish' }));
+    expect(onNext).toHaveBeenCalledWith(
+      expect.objectContaining({ response: 'She is very happy', correct: true }),
+    );
+  });
+
+  it('lets a placed word be taken back and reports a wrong order', async () => {
+    render(<QuestionCard question={orderQ} isLast onNext={() => {}} />);
+    const bank = within(screen.getByRole('list', { name: 'Word bank' }));
+    await userEvent.click(bank.getByRole('button', { name: 'is' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Remove is' }));
+    expect(bank.getByRole('button', { name: 'is' })).toBeEnabled();
+    await userEvent.click(bank.getByRole('button', { name: 'happy' }));
+    await userEvent.click(bank.getByRole('button', { name: 'She' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Check' }));
+    expect(screen.getByRole('status')).toHaveTextContent(/incorrect.*She is very happy/i);
   });
 });
