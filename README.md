@@ -160,3 +160,5 @@ Adaptive rules are pure functions in `server/src/services` (`adaptive.ts`, `gram
 ## Git workflow
 
 `main` holds released code and `develop` is the integration branch. Each feature lives on its own `feature/<name>` branch created from `develop` and merged with `--no-ff`. Commits follow Conventional Commits with the feature as the scope, for example `feat(vocabulary): add Sinhala auto-lookup on word input`.
+
+Challenge level and picture games were added as feature 10, after the original nine.
