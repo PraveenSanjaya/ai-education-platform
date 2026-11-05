@@ -58,7 +58,10 @@ adminRouter.put(
     const { password, ...rest } = parse(updateSchema, req.body);
     const update: Record<string, unknown> = { ...rest };
     if (password) update.passwordHash = await bcrypt.hash(password, 10);
-    if (String(req.user!._id) === req.params.id && (rest.active === false || rest.role === 'user')) {
+    if (
+      String(req.user!._id) === req.params.id &&
+      (rest.active === false || rest.role === 'user')
+    ) {
       throw new HttpError(400, 'You cannot deactivate or demote your own account');
     }
     const user = await User.findByIdAndUpdate(req.params.id, update, { new: true }).lean();
@@ -75,7 +78,11 @@ adminRouter.delete(
     if (String(req.user!._id) === req.params.id) {
       throw new HttpError(400, 'You cannot deactivate your own account');
     }
-    const user = await User.findByIdAndUpdate(req.params.id, { active: false }, { new: true }).lean();
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
+      { active: false },
+      { new: true },
+    ).lean();
     if (!user) throw new HttpError(404, 'User not found');
     res.json({ user: toPublicUser(user as UserDoc) });
   }),
