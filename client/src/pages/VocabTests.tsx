@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api';
+import { rulesFor } from '../lib/challenge';
+import { useAuth } from '../context/AuthContext';
 import type { VocabQuestion } from '../lib/types';
 import VocabRunner from '../components/VocabRunner';
 import type { VocabAnswer } from '../components/VocabRunner';
@@ -20,6 +22,7 @@ type Phase =
   | { name: 'done'; type: TestType; answers: VocabAnswer[] };
 
 export default function VocabTests() {
+  const { user } = useAuth();
   const [phase, setPhase] = useState<Phase>({ name: 'menu' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -60,7 +63,13 @@ export default function VocabTests() {
   }
 
   if (phase.name === 'running') {
-    return <VocabRunner questions={phase.questions} onFinish={(a) => finish(phase.type, a)} />;
+    return (
+      <VocabRunner
+        questions={phase.questions}
+        hints={rulesFor(user?.challenge).hints}
+        onFinish={(a) => finish(phase.type, a)}
+      />
+    );
   }
 
   if (phase.name === 'done') {
