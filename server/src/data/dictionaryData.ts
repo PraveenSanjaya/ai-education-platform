@@ -93,6 +93,7 @@ listen|සවන් දෙනවා|verb|A1|Listen to the teacher.
 see|දකිනවා|verb|A1|I can see a bird.
 look|බලනවා|verb|A1|Look at the board.
 learn|ඉගෙන ගන්නවා|verb|A1|I learn English every day.
+study|අධ්‍යයනය කරනවා|verb|A1|I study English at night.
 teach|උගන්වනවා|verb|A2|She teaches maths.
 play|සෙල්ලම් කරනවා|verb|A1|They play cricket on Sundays.
 work|වැඩ කරනවා|verb|A1|He works in a bank.
