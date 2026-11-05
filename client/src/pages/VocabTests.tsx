@@ -40,9 +40,19 @@ export default function VocabTests() {
   async function finish(type: TestType, answers: VocabAnswer[]) {
     setPhase({ name: 'done', type, answers });
     try {
-      await api('/words/review', {
+      await api('/results', {
         method: 'POST',
-        body: { answers: answers.map((a) => ({ wordId: a.question.wordId, correct: a.correct })) },
+        body: {
+          kind: 'vocab',
+          title: TYPES.find((t) => t.key === type)!.title,
+          answers: answers.map((a) => ({
+            wordId: a.question.wordId,
+            prompt: a.question.prompt,
+            response: a.response,
+            correctAnswer: a.question.answer,
+            correct: a.correct,
+          })),
+        },
       });
     } catch (err) {
       setError((err as Error).message);
