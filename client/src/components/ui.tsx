@@ -59,3 +59,16 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
     </section>
   );
 }
+
+/** Loading state announced to screen readers, with a spinner. */
+export function Loading({ label = 'Loading…' }: { label?: string }) {
+  return (
+    <p role="status" className="flex items-center gap-2 p-2 text-slate-600">
+      <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" opacity="0.25" />
+        <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="4" />
+      </svg>
+      {label}
+    </p>
+  );
+}

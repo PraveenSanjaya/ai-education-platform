@@ -4,6 +4,8 @@ import { isValidObjectId } from 'mongoose';
 import { Word, toPublicWord, type WordDoc } from '../models/Word.js';
 import { requireAuth } from '../middleware/auth.js';
 import { HttpError, parse, wrap } from '../middleware/http.js';
+import { applyVocabAnswers } from '../services/vocabReview.js';
+import { buildVocabTest } from '../services/vocabTest.js';
 
 export const wordsRouter = Router();
 wordsRouter.use(requireAuth);
@@ -64,5 +66,40 @@ wordsRouter.delete(
     const result = await Word.deleteOne({ _id: req.params.id, userId: req.user!._id });
     if (!result.deletedCount) throw new HttpError(404, 'Word not found');
     res.status(204).end();
+  }),
+);
+
+const testQuerySchema = z.object({ type: z.enum(['en-si', 'si-en', 'spelling', 'mistakes']) });
+
+wordsRouter.get(
+  '/test',
+  wrap(async (req, res) => {
+    const { type } = parse(testQuerySchema, req.query);
+    const questions = await buildVocabTest(req.user!._id, type);
+    if (questions.length === 0) {
+      throw new HttpError(
+        400,
+        type === 'mistakes'
+          ? 'No mistakes to review yet. Take a test first!'
+          : 'Add some words first, then come back to practise.',
+      );
+    }
+    res.json({ questions });
+  }),
+);
+
+const reviewSchema = z.object({
+  answers: z
+    .array(z.object({ wordId: z.string(), correct: z.boolean() }))
+    .min(1, 'No answers to record')
+    .max(100),
+});
+
+/** Apply the adaptive strength rule for each answered word. */
+wordsRouter.post(
+  '/review',
+  wrap(async (req, res) => {
+    const { answers } = parse(reviewSchema, req.body);
+    res.json({ words: await applyVocabAnswers(req.user!._id, answers) });
   }),
 );
