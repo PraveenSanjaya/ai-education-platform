@@ -93,7 +93,7 @@ describe('POST /api/results (grammar)', () => {
     const third = list.body.lessons[2];
     expect(list.body.lessons[3].unlocked).toBe(false);
 
-    const res = await submit(token, third.id, 8);
+    const res = await submit(token, third.id, 9);
     expect(res.body.percent).toBe(100);
     expect(res.body.outcome).toBe('pass');
     expect(res.body.unlockedNext).toBe(list.body.lessons[3].id);
@@ -104,12 +104,12 @@ describe('POST /api/results (grammar)', () => {
     const list = await request(app).get('/api/lessons').set(bearer(token));
     const first = list.body.lessons[0].id;
 
-    const retry = await submit(token, first, 5); // 5/8 = 63%
+    const retry = await submit(token, first, 6); // 6/9 = 67%
     expect(retry.body.outcome).toBe('retry');
-    const review = await submit(token, first, 2); // 25%
+    const review = await submit(token, first, 2); // 22%
     expect(review.body.outcome).toBe('review');
-    expect(review.body.wrongItems.length).toBe(6);
-    expect(review.body.bestPercent).toBe(63);
+    expect(review.body.wrongItems.length).toBe(7);
+    expect(review.body.bestPercent).toBe(67);
   });
 
   it('rejects unknown questions', async () => {
@@ -124,5 +124,56 @@ describe('POST /api/results (grammar)', () => {
         answers: [{ questionId: 'nope', response: 'x' }],
       });
     expect(res.status).toBe(400);
+  });
+});
+
+describe('word ordering questions', () => {
+  it('every lesson has an order question whose words build the answer', () => {
+    for (const l of lessonsSeed) {
+      const o = l.questions.find((q) => q.type === 'order');
+      expect(o).toBeDefined();
+      const words = [...o!.options!].map((w) => w.toLowerCase()).sort();
+      const expected = o!.answers[0].toLowerCase().split(' ').sort();
+      expect(words).toEqual(expected);
+    }
+  });
+});
+
+describe('mixed review and level check', () => {
+  const answerAll = (qs: { id: string; answers: string[] }[], correctFn: (i: number) => boolean) =>
+    qs.map((q, i) => ({ questionId: q.id, response: correctFn(i) ? q.answers[0] : 'wrong' }));
+
+  it('mixed review only draws from unlocked lessons and does not change best scores', async () => {
+    const { token } = await registerUser();
+    const res = await request(app).get('/api/grammar/mixed').set(bearer(token));
+    expect(res.status).toBe(200);
+    expect(res.body.questions).toHaveLength(10);
+    for (const q of res.body.questions) {
+      expect(q.id).toMatch(/^(articles|to-be|present-simple)-/);
+    }
+    const graded = await request(app)
+      .post('/api/results')
+      .set(bearer(token))
+      .send({ kind: 'mixed', answers: answerAll(res.body.questions, () => true) });
+    expect(graded.body.percent).toBe(100);
+    const lessons = await request(app).get('/api/lessons').set(bearer(token));
+    expect(lessons.body.lessons[0].bestPercent).toBeNull();
+  });
+
+  it('level check sets the start level from the furthest lesson reached', async () => {
+    const { token } = await registerUser();
+    const qs = (await request(app).get('/api/grammar/placement').set(bearer(token))).body.questions;
+    expect(qs).toHaveLength(9);
+    // all right up to lesson 5, then two mistakes at lessons 6 and 7
+    const res = await request(app)
+      .post('/api/results')
+      .set(bearer(token))
+      .send({ kind: 'placement', answers: answerAll(qs, (i) => i < 5 || i > 6) });
+    expect(res.body.reached).toBe(6);
+    expect(res.body.total).toBe(7);
+    expect(res.body.level).toBe('Elementary');
+    expect(res.body.user.startLevel).toBe('Elementary');
+    const me = await request(app).get('/api/users/me').set(bearer(token));
+    expect(me.body.user.startLevel).toBe('Elementary');
   });
 });
