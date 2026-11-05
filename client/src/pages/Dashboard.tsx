@@ -5,7 +5,7 @@ import { tzOffset } from '../lib/types';
 import type { Progress } from '../lib/types';
 import { useAuth } from '../context/AuthContext';
 import BarChart from '../components/BarChart';
-import { Card, ErrorMessage } from '../components/ui';
+import { Card, ErrorMessage, Loading } from '../components/ui';
 
 function Stat({ label, value }: { label: string; value: string | number }) {
   return (
@@ -34,7 +34,7 @@ export default function Dashboard() {
         <p className="text-slate-600">Starting level: {user?.startLevel}</p>
       </div>
       <ErrorMessage message={error} />
-      {!p && !error && <p>Loading your progress…</p>}
+      {!p && !error && <Loading label="Loading your progress…" />}
       {p && (
         <>
           <Card className="border-indigo-300 bg-indigo-50">
@@ -77,6 +77,18 @@ export default function Dashboard() {
               </p>
             )}
           </Card>
+
+          {p.lastScores.length === 0 && (
+            <Card>
+              <h2 className="font-semibold">Not sure where to start?</h2>
+              <p className="text-sm text-slate-600">
+                Take the level check: one question per lesson, and we will set your starting level.
+              </p>
+              <Link className="mt-2 inline-block text-indigo-700 underline" to="/grammar-tests">
+                Go to the level check
+              </Link>
+            </Card>
+          )}
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <Stat label="Day streak" value={p.streak} />
