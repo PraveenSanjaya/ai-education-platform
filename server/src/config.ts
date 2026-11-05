@@ -1,4 +1,9 @@
-import 'dotenv/config';
+import { config as loadEnv } from 'dotenv';
+import { fileURLToPath } from 'node:url';
+
+// Load the repo-root .env (works from src/ and dist/), then fall back to a .env in the cwd.
+loadEnv({ path: fileURLToPath(new URL('../../.env', import.meta.url)) });
+loadEnv();
 
 export const config = {
   port: Number(process.env.PORT ?? 4000),
