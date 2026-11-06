@@ -14,7 +14,7 @@ body {
 
 /* Sinhala text needs a little more line height to avoid clipping diacritics. */
 [lang='si'] {
-  font-family: 'Noto Sans', 'Noto Sans Sinhala', system-ui, sans-serif;
+  font-family: 'Noto Sans Sinhala', 'Noto Sans', system-ui, sans-serif;
   line-height: 1.6;
 }
 
@@ -157,4 +157,17 @@ body {
 }
 .dark .fill-indigo-500 {
   fill: #818cf8;
+}
+
+/* Phones: every tap target is at least 44x44 px. :where() keeps specificity at zero so component classes still win. */
+@media (max-width: 699px) {
+  :where(button, select, input:not([type='checkbox'], [type='radio']), a[href]:not(p a)) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  :where(a[href]:not(p a)) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
