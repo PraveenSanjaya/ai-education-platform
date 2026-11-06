@@ -7,14 +7,14 @@
 }
 
 body {
-  font-family: 'Noto Sans Sinhala', 'Noto Sans', system-ui, sans-serif;
+  font-family: 'Noto Sans', 'Noto Sans Sinhala', system-ui, sans-serif;
   background: #f8fafc;
   color: #0f172a;
 }
 
 /* Sinhala text needs a little more line height to avoid clipping diacritics. */
 [lang='si'] {
-  font-family: 'Noto Sans Sinhala', 'Noto Sans', system-ui, sans-serif;
+  font-family: 'Noto Sans', 'Noto Sans Sinhala', system-ui, sans-serif;
   line-height: 1.6;
 }
 
