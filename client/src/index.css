@@ -18,6 +18,30 @@ body {
   line-height: 1.6;
 }
 
+/* iPhone notch / home bar: needs viewport-fit=cover in index.html. */
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+.safe-tabbar {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+/* Tab bar is about 4rem tall; keep content (and any floating button) clear of it. */
+.main-with-tabs {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}
+.above-tabbar {
+  bottom: calc(4.5rem + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 700px) {
+  .above-tabbar {
+    bottom: 1rem;
+  }
+}
+
 /* Always-visible keyboard focus. */
 :focus-visible {
   outline: 3px solid #4f46e5;
@@ -133,4 +157,17 @@ body {
 }
 .dark .fill-indigo-500 {
   fill: #818cf8;
+}
+
+/* Phones: every tap target is at least 44x44 px. :where() keeps specificity at zero so component classes still win. */
+@media (max-width: 699px) {
+  :where(button, select, input:not([type='checkbox'], [type='radio']), a[href]:not(p a)) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  :where(a[href]:not(p a)) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

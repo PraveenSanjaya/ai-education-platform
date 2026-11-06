@@ -28,7 +28,9 @@ export default function Grammar() {
       <ol className="space-y-2">
         {lessons.map((l) => (
           <li key={l.id}>
-            <Card className={`flex flex-wrap items-center gap-3 ${l.unlocked ? '' : 'opacity-60'}`}>
+            <Card
+              className={`flex flex-wrap items-center gap-3 ${l.unlocked ? '' : 'border-dashed bg-slate-100'}`}
+            >
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 font-bold text-indigo-700">
                 {l.order}
               </span>
@@ -57,7 +59,7 @@ export default function Grammar() {
                   {l.attempts ? 'Open' : 'Start'}
                 </Link>
               ) : (
-                <span className="text-sm text-slate-500">🔒 Locked</span>
+                <span className="text-sm text-slate-700">🔒 Locked</span>
               )}
             </Card>
           </li>

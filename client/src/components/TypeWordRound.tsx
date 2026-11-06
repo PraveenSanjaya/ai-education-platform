@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { maxReveals, revealLetters } from '../lib/challenge';
 import { speak, speechSupported } from '../lib/speech';
@@ -23,6 +23,8 @@ export default function TypeWordRound({
   rate,
   allowReveal,
   isLast,
+  autoPlay = false,
+  onAudio,
   onDone,
 }: {
   word: PicWord;
@@ -30,16 +32,24 @@ export default function TypeWordRound({
   rate: number;
   allowReveal: boolean;
   isLast: boolean;
+  /** Listen and type: play the word on its own (only after the learner has already tapped once). */
+  autoPlay?: boolean;
+  onAudio?: (ok: boolean) => void;
   onDone: (r: RoundResult) => void;
 }) {
   const [typed, setTyped] = useState('');
   const [reveals, setReveals] = useState(0);
   const [result, setResult] = useState<RoundResult | null>(null);
 
-  // Listen and type plays the word automatically.
+  // iOS only allows speech that starts from a tap, so the first word waits for a tap
+  // and later words play by themselves only once audio is known to work.
+  const autoRef = useRef(autoPlay);
   useEffect(() => {
-    if (mode === 'listen' && speechSupported()) speak(word.english, rate);
-  }, [mode, word.english, rate]);
+    if (mode === 'listen' && autoRef.current && speechSupported()) {
+      speak(word.english, rate).then((ok) => onAudio?.(ok));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function check(e: FormEvent) {
     e.preventDefault();
@@ -56,7 +66,11 @@ export default function TypeWordRound({
         </div>
       ) : (
         <div className="my-6 flex justify-center">
-          <SpeakButton text={word.english} label="Play the word again" large />
+          {autoPlay ? (
+            <SpeakButton text={word.english} label="Play the word again" large onResult={onAudio} />
+          ) : (
+            <StartListening word={word.english} rate={rate} onResult={(ok) => onAudio?.(ok)} />
+          )}
         </div>
       )}
 
@@ -118,5 +132,31 @@ export default function TypeWordRound({
         </div>
       )}
     </div>
+  );
+}
+
+function StartListening({
+  word,
+  rate,
+  onResult,
+}: {
+  word: string;
+  rate: number;
+  onResult: (ok: boolean) => void;
+}) {
+  const [played, setPlayed] = useState(false);
+  return played ? (
+    <SpeakButton text={word} label="Play the word again" large onResult={onResult} />
+  ) : (
+    <Button
+      type="button"
+      className="px-6 py-4 text-lg"
+      onClick={async () => {
+        setPlayed(true);
+        onResult(await speak(word, rate));
+      }}
+    >
+      🔊 Tap to start listening
+    </Button>
   );
 }
