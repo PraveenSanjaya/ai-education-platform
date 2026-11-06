@@ -142,6 +142,7 @@ export default function WordGame({ mode }: { mode: 'picture' | 'listen' }) {
 
   return (
     <Card>
+      <h1 className="sr-only">{copy.title}</h1>
       <p className="text-sm text-slate-600">
         {copy.title} · Word {index + 1} of {words.length}
       </p>
