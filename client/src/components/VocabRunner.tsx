@@ -72,6 +72,7 @@ export default function VocabRunner({
       <div
         className="my-2 h-2 rounded bg-slate-200"
         role="progressbar"
+        aria-label="Test progress"
         aria-valuenow={index}
         aria-valuemin={0}
         aria-valuemax={questions.length}
